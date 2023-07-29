@@ -1,0 +1,7 @@
+{
+  "type": "module",
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "node-telegram-bot-api": "^0.61.0"
+  }
+}
