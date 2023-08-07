@@ -8,6 +8,7 @@ import { AudioStory, User } from "./models.js";
 import startHandler from "./commands/start.js";
 import audioStoryHandler from "./commands/audiostory.js";
 import chapterHandler from "./commands/chapter.js";
+import chapterRatingHandler from "./commands/chapterRating.js";
 
 dotenv.config();
 
@@ -30,87 +31,10 @@ bot.onText(/\/start/, async (msg) => await startHandler(bot, msg));
 
 bot.onText(/^".+"$/, async (msg) => await audioStoryHandler(bot, msg));
 
-bot.on(
-  "callback_query",
-  async (callbackQuery) => await chapterHandler(bot, callbackQuery)
-);
+bot.on("callback_query", async (callbackQuery) => {
+  const data = callbackQuery.data.split(":");
+  if (data[0] === "play") await chapterHandler(bot, callbackQuery);
+  else if (data[0] === "rate") await chapterRatingHandler(bot, callbackQuery);
+});
 
-// bot.on("message", function (msg) {
-//   const chatId = msg.chat.id;
-
-//   const video = createReadStream("../media/waiting.mp4");
-
-//   readFile("../message.txt", "utf-8", (err, messageText) => {
-//     bot.sendVideo(chatId, video, {
-//       caption: messageText,
-//       reply_markup: {
-//         inline_keyboard: [
-//           [
-//             {
-//               text: "Сообщите мне об обновлениях!",
-//               callback_data: "subscribe_to_updates",
-//             },
-//           ],
-//         ],
-//       },
-//       parse_mode: "Markdown",
-//     });
-
-//     const result = [];
-//     let userInDb = false;
-
-//     createReadStream("../users.csv")
-//       .pipe(csv())
-//       .on("data", (row) => {
-//         if (row.chatId === chatId.toString()) userInDb = true;
-//         result.push([row.userId, row.chatId, row.subscribed]);
-//       })
-//       .on("end", () => {
-//         if (!userInDb) {
-//           const writer = createWriteStream("../users.csv");
-//           const headers = ["userId", "chatId", "subscribed"];
-//           writer.write(headers.join(","));
-//           for (let el of result) {
-//             writer.write("\n" + el.join(","));
-//           }
-//           writer.write(
-//             "\n" +
-//               [msg.from.id.toString(), chatId.toString(), "false"].join(",")
-//           );
-//         }
-//       });
-//   });
-// });
-
-// bot.on("callback_query", (callbackQuery) => {
-//   const msg = callbackQuery.message;
-//   const chatId = msg.chat.id;
-//   const data = callbackQuery.data;
-
-//   if (data === "subscribe_to_updates") {
-//     const result = [];
-
-//     createReadStream("../users.csv")
-//       .pipe(csv())
-//       .on("data", (row) => {
-//         if (row.chatId === chatId.toString()) row.subscribed = "true";
-//         result.push([row.userId, row.chatId, row.subscribed]);
-//       })
-//       .on("end", () => {
-//         const writer = createWriteStream("../users.csv");
-//         const headers = ["userId", "chatId", "subscribed"];
-//         writer.write(headers.join(","));
-//         for (let el of result) {
-//           writer.write("\n" + el.join(","));
-//         }
-//         writer.write(
-//           "\n" + [msg.from.id.toString(), chatId.toString(), "false"].join(",")
-//         );
-//         bot.answerCallbackQuery(callbackQuery.id, {
-//           text: "Благодарим за подписку на обновления 🥰",
-//         });
-//       });
-//   }
-// });
-
-bot.on("polling_error", console.log);
+bot.on("polling_error", console.error);

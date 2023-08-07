@@ -1,4 +1,5 @@
 import { AudioStory, User } from "../models.js";
+import { readFile } from "fs/promises";
 
 export default async function startHandler(bot, msg) {
   const chatId = msg.chat.id;
@@ -17,10 +18,24 @@ export default async function startHandler(bot, msg) {
       resize_keyboard: true,
     };
 
-    bot.sendMessage(chatId, "Привет! Выберите аудиоисторию:", {
+    const greetingsMessage = await readFile(
+      "./src/messages/start_greetingsMessage.txt",
+      {
+        encoding: "utf8",
+      }
+    );
+    bot.sendMessage(chatId, greetingsMessage);
+
+    const chooseStoryMessage = await readFile(
+      "./src/messages/start_chooseStoryMessage.txt",
+      {
+        encoding: "utf8",
+      }
+    );
+    bot.sendMessage(chatId, chooseStoryMessage, {
       reply_markup: keyboard,
     });
   } catch (error) {
-    console.error("Error fetching from db:", error);
+    console.error("Error in 'start':", error);
   }
 }

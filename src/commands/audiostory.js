@@ -1,4 +1,5 @@
-import { createReadStream, createWriteStream, read, readFile } from "fs";
+import { createReadStream } from "fs";
+import { readFile } from "fs/promises";
 
 import { AudioStory, User } from "../models.js";
 
@@ -13,11 +14,6 @@ export default async function audioStoryHandler(bot, msg) {
       bot.sendMessage(chatId, "Аудиоистория не найдена");
       return;
     }
-
-    let message =
-      "Для полного погружения рекомендуем купить картину по номерам.\n\n";
-    message +=
-      "Если вы этого еще не сделали, то это можно сделать по ссылкам ниже.";
 
     let keyboard = {
       inline_keyboard: [
@@ -38,18 +34,25 @@ export default async function audioStoryHandler(bot, msg) {
       ],
     };
 
+    const sellMessage = await readFile(
+      "./src/messages/audiostory_sellMessage.txt"
+    );
+
     if (audioStory.productPhotoLocation) {
       const photo = createReadStream(
         `./media/${audioStory.productPhotoLocation}`
       );
       bot.sendPhoto(chatId, photo, {
-        caption: message,
+        caption: sellMessage,
         reply_markup: keyboard,
       });
     } else {
-      bot.sendMessage(chatId, message, { reply_markup: keyboard });
+      bot.sendMessage(chatId, sellMessage, { reply_markup: keyboard });
     }
 
+    const chooseChapterMessage = await readFile(
+      "./src/messages/audiostory_chooseChapterMessage.txt"
+    );
     setTimeout(() => {
       keyboard = {
         inline_keyboard: audioStory.chapters.map((el) => {
@@ -62,7 +65,7 @@ export default async function audioStoryHandler(bot, msg) {
         }),
       };
 
-      bot.sendMessage(chatId, "Выберете главу.", {
+      bot.sendMessage(chatId, chooseChapterMessage, {
         reply_markup: keyboard,
       });
     }, 5000);

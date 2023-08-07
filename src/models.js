@@ -7,9 +7,9 @@ const chapterSchema = new Schema({
   id: { type: Number, required: true, default: 1 },
   title: { type: String, required: true },
   ratings: {
-    bad: { type: Number, default: 0 },
-    neutral: { type: Number, default: 0 },
-    good: { type: Number, default: 0 },
+    bad: [{ type: String }],
+    neutral: [{ type: String }],
+    good: [{ type: String }],
   },
   fileLocation: { type: String, required: true },
 });
@@ -28,7 +28,7 @@ const audioStorySchema = new Schema({
 });
 
 const userSchema = new Schema({
-  chatId: { type: String, required: true },
+  chatId: { type: String, required: true, unique: true },
   purchasedAudioStories: [
     {
       audioStoryId: { type: Schema.Types.ObjectId, ref: "AudioStory" },
