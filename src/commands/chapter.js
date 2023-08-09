@@ -15,6 +15,11 @@ export default async function chapterHandler(bot, callbackQuery) {
       (el) => el.id.toString() === data[2]
     );
 
+    if (!chapter || !chapter.fileLocation) {
+      bot.sendMessage(chatId, "Глава в разработке!")
+      return;
+    }
+
     const audio = createReadStream(`./media/${chapter.fileLocation}`);
     const fileOptions = {
       filename: chapter.title,

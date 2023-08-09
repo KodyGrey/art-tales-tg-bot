@@ -18,18 +18,18 @@ export default async function audioStoryHandler(bot, msg) {
     let keyboard = {
       inline_keyboard: [
         [
-          // audioStory.productLinks.ozon && {
-          //   text: "OZON",
-          //   url: audioStory.productLinks.ozon,
-          // },
+          audioStory.productLinks.ozon && {
+            text: "OZON",
+            url: audioStory.productLinks.ozon,
+          },
           // audioStory.productLinks.wildberries && {
           //   text: "WB",
           //   url: audioStory.productLinks.wildberries,
           // },
-          audioStory.productLinks.landing && {
-            text: "На сайте",
-            url: audioStory.productLinks.landing,
-          },
+          // audioStory.productLinks.landing && {
+          //   text: "На сайте",
+          //   url: audioStory.productLinks.landing,
+          // },
         ],
       ],
     };
